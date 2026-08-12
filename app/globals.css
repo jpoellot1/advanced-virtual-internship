@@ -192,6 +192,10 @@ input {
   justify-content: center;
 }
 
+.btn.guest__btn--wrapper:hover {
+  background-color: #25396b !important;
+}
+
 .auth__separator {
   display: flex;
   align-items: center;
@@ -220,6 +224,10 @@ input {
   background-color: #4285f4;
   color: #fff;
   justify-content: center;
+}
+
+.btn.google__btn--wrapper:hover {
+  background-color: #3367d6 !important;
 }
 
 .google__icon--mask {
@@ -289,6 +297,11 @@ input {
 .auth__close--btn svg {
   height: 28px;
   width: 28px;
+}
+
+.auth__error {
+    color: #f56c6c;
+    margin-bottom: 16px;
 }
 
 /* LANDING */
@@ -727,6 +740,7 @@ input {
   padding: 24px;
   margin-bottom: 24px;
   gap: 24px;
+  cursor: pointer;
 }
 
 .selected__book--sub-title {

@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, {useState} from 'react'
 import { CiStar, CiClock2, CiBookmark } from "react-icons/ci";
 import { TiMicrophoneOutline } from "react-icons/ti";
 import { HiOutlineLightBulb } from "react-icons/hi";
@@ -12,6 +12,7 @@ function Book() {
     const params = useParams()
     const id = params?.id as string
     const router = useRouter()
+    const [duration, setDuration] = useState<string>('00:00')
 
     const {data, error, isLoading} = useGetInsideBookQuery(id)
 
@@ -20,6 +21,19 @@ function Book() {
     
     const book = data
 
+    const formatTime = (timeInSeconds: number): string => {
+        if(isNaN(timeInSeconds)) return '0:00';
+        const minutes = Math.floor(timeInSeconds / 60);
+        const seconds = Math.floor(timeInSeconds % 60);
+        const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+        const formattedSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
+        return `${formattedMinutes}:${formattedSeconds}`;
+    }
+
+    const handleDuration = (e: React.SyntheticEvent<HTMLAudioElement>) => {
+        const audioSeconds = e.currentTarget.duration;
+        setDuration(formatTime(audioSeconds))
+    }
 
     const handleNavigate= () => {
         router.push(`/player/${id}`)
@@ -29,7 +43,10 @@ function Book() {
     <div id="__next">
         <div className="wrapper">
             <div className="row">
-                <audio src={book.audioLink}></audio>
+                <audio src={book.audioLink}
+                preload='metadata'
+                onLoadedMetadata={handleDuration}
+                ></audio>
                 <div className="container">
                     <div className="inner__wrapper">
                         <div className="inner__book">
@@ -49,7 +66,7 @@ function Book() {
                                         <div className="inner-book__icon">
                                             <CiClock2 />
                                         </div>
-                                        <div className="inner-book__duration">03:24</div>
+                                        <div className="inner-book__duration">{duration}</div>
                                     </div>
                                     <div className="inner-book__description">
                                         <div className="inner-book__icon">

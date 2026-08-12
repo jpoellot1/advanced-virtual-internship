@@ -75,7 +75,9 @@ function AudioPlayer ({audioLink, imageLink, title, author} : AudioPlayerProps) 
         if(isNaN(timeInSeconds)) return '0:00';
         const minutes = Math.floor(timeInSeconds / 60);
         const seconds = Math.floor(timeInSeconds % 60);
-        return `${minutes < 10 ? '0': ''}${minutes}:${seconds < 10 ? '0': ''}${seconds}`
+        const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+        const formattedSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
+        return `${formattedMinutes}:${formattedSeconds}`;
     }
 
     const progressPercentage = duration && !isNaN(duration) && duration > 0 ? (currentTime / duration) * 100 : 0;
