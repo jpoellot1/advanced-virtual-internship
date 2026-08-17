@@ -16,3 +16,11 @@ export interface Book {
     bookDescription: string;
     authorDescription: string;
 }
+
+export type AudioPlayerProps = {
+    author: string;
+    imageLink :string;
+    audioLink : string;
+    title: string;
+    id: string
+}

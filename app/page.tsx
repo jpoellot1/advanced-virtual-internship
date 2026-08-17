@@ -7,7 +7,7 @@ import { BsStarFill, BsStarHalf } from "react-icons/bs";
 import { BiCrown } from "react-icons/bi";
 import { RiLeafLine } from "react-icons/ri";
 import { useAppDispatch } from "./Redux/lib/hooks";
-import { authModalSlice, openAuthModal } from "./Redux/authModalSlice";
+import { openAuthModal } from "./Redux/authModalSlice";
 
 export default function Home() {
   const dispatch = useAppDispatch()

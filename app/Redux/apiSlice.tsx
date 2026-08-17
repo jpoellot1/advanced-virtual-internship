@@ -16,8 +16,11 @@ export const apiSlice = createApi({
         getInsideBook : builder.query<any, string>({
             query: (id) => `getBook?id=${id}`
         }),
+        getSearchBooks : builder.query<any, string> ({
+            query: (search) =>`getBooksByAuthorOrTitle?search=${search}`
+        })
 
     })
 })
 
-export const { useGetSelectedBookQuery, useGetRecommendedBooksQuery, useGetSuggestedBooksQuery, useGetInsideBookQuery} = apiSlice
+export const { useGetSelectedBookQuery, useGetRecommendedBooksQuery, useGetSuggestedBooksQuery, useGetInsideBookQuery, useGetSearchBooksQuery} = apiSlice

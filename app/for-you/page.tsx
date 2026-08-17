@@ -1,5 +1,4 @@
 'use client'
-import React from 'react'
 import Recommended from "./components/recommended"
 import Suggested from './components/suggested';
 import Selected from './components/selected';

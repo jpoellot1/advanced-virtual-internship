@@ -3,15 +3,19 @@ import React, {useState} from 'react'
 import { useGetSelectedBookQuery } from '../../Redux/apiSlice';
 import { FaPlayCircle } from 'react-icons/fa';
 import Link from 'next/link';
+import Skeleton from '@/app/components/skeleton';
 
 const Selected = () => {
     const {data, error, isLoading} = useGetSelectedBookQuery('')
     const [duration, setDuration] = useState<string>('00:00')
+    const selectedBook = data?.[0];
 
-    if (isLoading) return <div>Loading data...</div>;
+    if (isLoading) return( 
+      <Skeleton width="650px" height="150px" borderRadius="4px"/>
+    )
     if (error) return <div>An error occurred.</div>;
 
-    const selectedBook = data?.[0];
+    
 
     const formatTime = (timeInSeconds: number): string => {
       if(isNaN(timeInSeconds)) return '0:00';

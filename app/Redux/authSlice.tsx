@@ -3,8 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export interface AuthUser {
     uid: string;
     email: string | null;
-    isAnonymous : boolean;
-    // isSubscribed: boolean;
+    subscriptionStatus: 'basic' | 'premium';
 }
 
 interface AuthState {

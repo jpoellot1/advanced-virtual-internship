@@ -1,19 +1,12 @@
 'use client'
-import React, {useState, useRef, useEffect} from "react";
+import React, {useState, useRef} from "react";
 import { RiReplay10Line, RiForward10Line } from "react-icons/ri";
 import { IoPlaySharp } from "react-icons/io5";
 import { IoPause } from "react-icons/io5";
+import { AudioPlayerProps } from "@/app/types";
 
 
-type AudioPlayerProps = {
-    author: string;
-    imageLink :string;
-    audioLink : string;
-    title: string;
-}
-
-
-function AudioPlayer ({audioLink, imageLink, title, author} : AudioPlayerProps) {
+function AudioPlayer ({audioLink, imageLink, title, author, id} : AudioPlayerProps) {
     const audioRef = useRef<HTMLAudioElement | null>(null)
 
     const [isPlaying, setIsPlaying] = useState<boolean>(false)

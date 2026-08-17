@@ -15,7 +15,7 @@ export default function AuthProvider({children}:{children: React.ReactNode}) {
                     setUser({
                         uid: firebaseUser.uid,
                         email: firebaseUser.email,
-                        isAnonymous: firebaseUser.isAnonymous,
+                        subscriptionStatus: 'basic'
                     })
                 )
             }

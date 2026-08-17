@@ -4,6 +4,7 @@ import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import Modal from "./modal/modal";
 import AuthProvider from "./components/AuthProvider";
+import AppLayoutWrapper from "@/app/components/appLayoutWrapper"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,8 +31,10 @@ export default function RootLayout({
       <body>
         <StoreProvider>
           <AuthProvider>
-            {children}
-            <Modal />
+            <AppLayoutWrapper>  
+              {children}
+              <Modal />
+            </AppLayoutWrapper>
           </AuthProvider>
         </StoreProvider>
       </body>

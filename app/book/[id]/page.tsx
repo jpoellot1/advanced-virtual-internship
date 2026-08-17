@@ -6,17 +6,43 @@ import { HiOutlineLightBulb } from "react-icons/hi";
 import { LuBookOpenText } from "react-icons/lu";
 import { useGetInsideBookQuery } from '@/app/Redux/apiSlice';
 import { useParams, useRouter } from 'next/navigation';
-
+import { useAuth } from '@/app/components/useAuth';
+import { useAppDispatch } from '@/app/Redux/lib/hooks';
+import { openAuthModal } from '@/app/Redux/authModalSlice';
+import Skeleton from '@/app/components/skeleton';
 
 function Book() {
     const params = useParams()
     const id = params?.id as string
     const router = useRouter()
     const [duration, setDuration] = useState<string>('00:00')
+    const {isPremium, user} = useAuth()
+    const dispatch = useAppDispatch()
 
     const {data, error, isLoading} = useGetInsideBookQuery(id)
 
-    if (isLoading) return <div>Loading data...</div>;
+    if (isLoading) {return (
+        <div className="wrapper">
+            <div className="row">
+                <div className="container">
+                    <div className="inner__wrapper">
+                        <div className="skeleton__book">
+                            <Skeleton width='500px' height='30px' borderRadius='4px' className="inner-book__title"/>
+                            <Skeleton width='200px' height='30px' borderRadius='4px' className="inner-book__author"/>
+                            <Skeleton width='500px' height='30px' borderRadius='4px' className="inner-book__sub-title"/>
+                            <Skeleton width='300px' height='60px' borderRadius='4px'  className="inner-book__wrapper"/>
+                            <Skeleton width='200px' height='40px' borderRadius='4px'  className="inner-book__btn--wrapper"/>
+                            <Skeleton width='150px' height='30px' borderRadius='4px'  className="inner-book__bookmark"/>
+                            <Skeleton width='300px' height='40px' borderRadius='4px'  className="inner-book__secondary--title"/>
+                            <Skeleton width='500px' height='400px' borderRadius='4px'  className="inner-book__book--description"/>
+                            <Skeleton width='500px' height='400px' borderRadius='4px'  className="inner-book__author--description"/>
+                        </div>
+                        <Skeleton width='300px' height='300px' borderRadius='4px'  className="inner-book__img--wrapper"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )}
     if (error) return <div>An error occurred.</div>;
     
     const book = data
@@ -36,6 +62,18 @@ function Book() {
     }
 
     const handleNavigate= () => {
+        if(!user) {  
+            dispatch(openAuthModal('login'))
+            return
+        }
+        if(book.subscriptionRequired) {
+            if(isPremium) {
+            router.push(`/player/${id}`)
+            }else {
+            router.push('/choose-plan')
+            } 
+            return
+        } 
         router.push(`/player/${id}`)
     }
 
@@ -89,7 +127,7 @@ function Book() {
                                         </div>
                                         <div className="inner-book__read--text">Read</div>
                                     </button>
-                                <button className="inner-book__read--btn">
+                                <button className="inner-book__read--btn" onClick={handleNavigate}>
                                     <div className="inner-book__read--icon">
                                         <TiMicrophoneOutline />
                                     </div>

@@ -1,8 +1,8 @@
 'use client'
-import React from 'react'
 import { useGetInsideBookQuery } from '@/app/Redux/apiSlice';
 import { useParams } from 'next/navigation';
 import AudioPlayer from '../components/audioPlayer';
+import { ImSpinner8 } from "react-icons/im";
 
 function Player() {
     const params = useParams()
@@ -10,7 +10,15 @@ function Player() {
     
     const {data, error, isLoading} = useGetInsideBookQuery(id)
     
-    if (isLoading) return <div>Loading data...</div>;
+    if (isLoading) {return (
+        <div className="wrapper">
+            <div className="summary">
+                <div className="skeleton__spinner--wrapper">
+                    <span><ImSpinner8 className='animate__spin--player'/></span>
+                </div>
+            </div>
+        </div>
+    )}
     if (error) return <div>An error occurred.</div>;
         
     const book = data
@@ -34,6 +42,7 @@ function Player() {
                 imageLink= {book.imageLink}
                 title= {book.title}
                 author= {book.author}
+                id= {book.id}
                 />
             </div>
         </div>

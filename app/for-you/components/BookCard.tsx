@@ -3,10 +3,13 @@ import React, {useState} from 'react'
 import Link from 'next/link'
 import { CiClock2, CiStar } from "react-icons/ci";
 import { Book } from "../../types"
+import { useAuth } from '@/app/components/useAuth';
 
 
 export default function BookCard({book}: {book : Book}) {
     const [duration, setDuration] = useState<string>('00:00')
+    const {isPremium, isLoading} = useAuth()
+    if(isLoading) return null;
 
     const formatTime = (timeInSeconds: number): string => {
         if(isNaN(timeInSeconds)) return '0:00';
@@ -24,6 +27,9 @@ export default function BookCard({book}: {book : Book}) {
 
   return (
     <Link key={book.id}href={`./book/${book.id}`} className="for-you__recommended--books-link">
+            {book.subscriptionRequired && !isPremium && (
+              <div className="book__pill">Premium</div>
+            )}
             <audio src={book.audioLink}
             preload='metadata'
             onLoadedMetadata={handleDuration}

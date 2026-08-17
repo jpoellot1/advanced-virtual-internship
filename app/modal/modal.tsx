@@ -4,16 +4,18 @@ import Image from 'next/image'
 import Google from "../Assets/google.png"
 import { IoClose } from "react-icons/io5";
 import { useAppDispatch, useAppSelector } from '@/app/Redux/lib/hooks';
-import { closeAuthModal, setAuthModalView, AuthModalView } from '../Redux/authModalSlice';
-import {auth} from "../../firebase"
+import { closeAuthModal, setAuthModalView} from '../Redux/authModalSlice';
+import {auth, db} from "../../firebase"
 import { GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
+import {doc, setDoc} from 'firebase/firestore'
+import { useRouter, usePathname } from 'next/navigation';
 import { BsFillPersonFill } from 'react-icons/bs'
 
 function Modal() {
     const dispatch = useAppDispatch();
     const router = useRouter()
-    const {isOpen, view} = useAppSelector((state) => state.authModal)
+    const pathname = usePathname()
+    const {isOpen, view, redirectUrl} = useAppSelector((state) => state.authModal)
     const isSignUp = view ==='register'
 
     const [email, setEmail] = useState('')
@@ -44,13 +46,24 @@ function Modal() {
         setLoadingType(null)
     }
 
+    const handlePostAuthRedirect = () => {
+      closeModal()
+      if(redirectUrl) {
+        router.push(redirectUrl)
+        return
+      }
+      if(pathname === '/') {
+        router.push('/for-you')
+      }
+      router.refresh()
+    }
+
     const handleGuestLogin = async () => {
             setLoadingType('guest')
             setErrorMessage(null)
             try {
                 await signInWithEmailAndPassword(auth, guestEmail, guestPassword)
-                closeModal()
-                router.push('/for-you') 
+                handlePostAuthRedirect() 
             } catch(error: any) {
                 console.error('Error logging in as Guest:', error);
                 setErrorMessage('Failed to log in as Guest')
@@ -66,9 +79,16 @@ function Modal() {
             try{
                 const provider = new GoogleAuthProvider();
                 provider.setCustomParameters({prompt: 'select_account'})
-                await withTimeout(signInWithPopup(auth, provider));
-                closeModal()
-                router.push('/for-you')
+                const userCredential = await withTimeout(signInWithPopup(auth, provider));
+                const user = userCredential.user
+
+                await setDoc(doc(db, 'users', user.uid), {
+                  email: user.email,
+                  subscriptionStatus: 'basic',
+                  createdAt: new Date().toISOString(),
+                }, { merge: true });
+
+                handlePostAuthRedirect()
             } catch (error: any) {
                 console.error('Email Auth Error:', error)
                 if (error.code === 'auth/popup-closed-by-user') {
@@ -98,12 +118,18 @@ function Modal() {
         setErrorMessage(null)
         try {
             if(isSignUp) {
-                await withTimeout(createUserWithEmailAndPassword(auth, email, password));
+              const userCredential = await withTimeout(createUserWithEmailAndPassword(auth, email, password));
+              const user = userCredential.user
+
+              await setDoc(doc(db, 'users', user.uid), {
+                email: user.email,
+                subscriptionStatus: 'basic',
+                createdAt: new Date().toISOString(),
+              }, {merge: true})
             }else {
                 await withTimeout(signInWithEmailAndPassword(auth, email, password))
             }
-            closeModal();
-            router.push('/for-you')
+            handlePostAuthRedirect()
         } catch(error: any) {
             console.error('Email Auth Error:', error)
             if(error.code === 'auth/email-already-in-use'){
